@@ -3,12 +3,29 @@
 <h1>Merlin Notifier Products</h1>
 
 <div id="products">
-  <% @products.each do |product| %>
-    <%= render product %>
-    <p>
-      <%= link_to "Show this product", product %>
-    </p>
-  <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          <strong>Merlin ID</strong>
+        </th>
+        <th>
+          <strong>Name</strong>
+        </th>
+        <th>
+          <strong>Stock qty</strong>
+        </th>
+        <th>
+          <strong>Price</strong>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+        <%= render product %>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <%= link_to "New product", new_product_path %>
