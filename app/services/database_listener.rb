@@ -9,24 +9,7 @@ class DatabaseListener
           conn.wait_for_notify do |channel, pid, payload|
             puts "Received NOTIFY on channel #{channel} with payload: #{payload}"
 
-            result = eval(payload)
-            ap result
-
-            if result[:crud_method] == "UPDATE"
-              # row = Portal::Product.find_by(merlin_product_id: result[:id])
-              # row.update(name: result[:name], stock_qty: result[:stock_qty], price: result[:price]) if row
-
-              Portal::Product.where(merlin_product_id: result[:id]).update(name: result[:name], stock_qty: result[:stock_qty], price: result[:price])
-
-            elsif result[:crud_method] == "INSERT"
-              Portal::Product.create(name: result[:name], stock_qty: result[:stock_qty], price: result[:price])
-
-            else
-              # row = Portal::Product.find_by(merlin_product_id: result[:id])
-              # row.destroy if row
-
-              Portal::Product.where(merlin_product_id: result[:id]).delete
-            end
+            ListenerJob.perform_async(payload)
           end
         end
       ensure
