@@ -68,6 +68,7 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    awesome_print (1.9.2)
     base64 (0.2.0)
     bindex (0.8.1)
     bootsnap (1.18.4)
@@ -222,6 +223,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   bootsnap
   capybara
   debug

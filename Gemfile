@@ -72,3 +72,4 @@ group :test do
 end
 
 gem 'fx', '~> 0.8.0'
+gem 'awesome_print'

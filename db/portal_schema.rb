@@ -16,6 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_10_054507) do
 
   create_table "products", force: :cascade do |t|
     t.string "name"
+    t.integer "merlin_product_id"
     t.integer "stock_qty"
     t.decimal "price"
     t.datetime "created_at", null: false
@@ -29,7 +30,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_10_054507) do
       AS $function$
         BEGIN
           IF (TG_OP = 'DELETE') THEN
-            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: delete, id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
+            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
             RETURN OLD;
           ELSE
             PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || COALESCE(NEW.id, 0) || '", name: "' || COALESCE(NEW.name, '') || '", stock_qty: "' || COALESCE(NEW.stock_qty, 0) || '", price: "' || COALESCE(NEW.price, 0) || '"}');
