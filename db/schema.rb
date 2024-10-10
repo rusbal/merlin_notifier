@@ -29,10 +29,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_10_054507) do
       AS $function$
         BEGIN
           IF (TG_OP = 'DELETE') THEN
-            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_EVENT || '", id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
+            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: delete, id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
             RETURN OLD;
           ELSE
-            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_EVENT || '", id: "' || COALESCE(NEW.id, 0) || '", name: "' || COALESCE(NEW.name, '') || '", stock_qty: "' || COALESCE(NEW.stock_qty, 0) || '", price: "' || COALESCE(NEW.price, 0) || '"}');
+            PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || COALESCE(NEW.id, 0) || '", name: "' || COALESCE(NEW.name, '') || '", stock_qty: "' || COALESCE(NEW.stock_qty, 0) || '", price: "' || COALESCE(NEW.price, 0) || '"}');
             RETURN NEW;
           END IF;
         END;
