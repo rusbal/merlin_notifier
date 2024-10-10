@@ -3,12 +3,15 @@
     <%= product.id %>
   </td>
   <td>
-    <%= link_to product.name, product %>
+    <%= link_to product.name, edit_product_path(product) %>
   </td>
   <td>
     <%= product.stock_qty %>
   </td>
   <td>
     <%= product.price %>
+  </td>
+  <td>
+    <%= link_to 'Delete', product_path(product), data: {turbo_method: :delete, turbo_confirm: 'Are you sure?'} %>
   </td>
 </tr>
