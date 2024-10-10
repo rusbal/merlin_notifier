@@ -4,15 +4,29 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
-  <<: *default
-  database: merlin_notifier_development
+  primary:
+    <<: *default
+    database: merlin_notifier_development
+  portal:
+    <<: *default
+    database: portal_development
 
 test:
-  <<: *default
-  database: merlin_notifier_test
+  primary:
+    <<: *default
+    database: merlin_notifier_test
+  portal:
+    <<: *default
+    database: portal_test
 
 production:
-  <<: *default
-  database: merlin_notifier_production
-  username: merlin_notifier
-  password: <%= ENV["MERLIN_NOTIFIER_DATABASE_PASSWORD"] %>
+  primary:
+    <<: *default
+    database: merlin_notifier_production
+    username: merlin_notifier
+    password: <%= ENV["MERLIN_NOTIFIER_DATABASE_PASSWORD"] %>
+  portal:
+    <<: *default
+    database: portal_production
+    username: portal
+    password: <%= ENV["PORTAL_DATABASE_PASSWORD"] %>
