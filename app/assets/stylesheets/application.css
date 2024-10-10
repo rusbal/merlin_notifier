@@ -13,3 +13,42 @@
  *= require_tree .
  *= require_self
  */
+
+table {
+    font-size:16px;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+ td,  th {
+    text-align: left;
+    padding: 8px;
+}
+ th {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    background-color: #04AA6D;
+    color: white;
+}
+table.blacktableborders, table.blacktableborders th, table.blacktableborders td {
+  border: 1px solid;
+}
+table.fullwidthtable, table.fullwidthtable th, table.fullwidthtable td {
+  border: 1px solid black;
+  width: 100%;
+}
+body.darkpagetheme table.fullwidthtable, body.darkpagetheme table.fullwidthtable th, body.darkpagetheme table.fullwidthtable td {
+  border: 1px solid;
+}
+table.bordercollapsetable, table.bordercollapsetable th, table.bordercollapsetable td {
+  border: 1px solid;
+  width: 100%;
+  border-collapse: collapse;
+}
+table.onlytableborder {
+  border: 1px solid;
+  width: 100%;
+  border-collapse: collapse;
+}
+
