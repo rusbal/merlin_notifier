@@ -70,3 +70,5 @@ group :test do
   gem "selenium-webdriver"
 
 end
+
+gem 'fx', '~> 0.8.0'
