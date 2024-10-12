@@ -1,11 +1,45 @@
 CREATE OR REPLACE FUNCTION products_notifier() RETURNS TRIGGER as $products_notifier$
   BEGIN
-    IF (TG_OP = 'DELETE') THEN
-      PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
-      RETURN OLD;
-    ELSE
-      PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || COALESCE(NEW.id, 0) || '", name: "' || COALESCE(NEW.name, '') || '", stock_qty: "' || COALESCE(NEW.stock_qty, 0) || '", price: "' || COALESCE(NEW.price, 0) || '"}');
+    IF (TG_OP = 'INSERT') THEN
+      PERFORM pg_notify(
+        'products_notification',
+        json_build_object(
+          'table', TG_TABLE_NAME,
+          'type', TG_OP,
+          'id', NEW.id,
+          'new', row_to_json(NEW),
+          'old', ''
+        )::text
+      );
       RETURN NEW;
+    END IF;
+
+    IF (TG_OP = 'UPDATE') THEN
+      PERFORM pg_notify(
+        'products_notification',
+        json_build_object(
+          'table', TG_TABLE_NAME,
+          'type', TG_OP,
+          'id', NEW.id,
+          'new', row_to_json(NEW),
+          'old', row_to_json(OLD)
+        )::text
+      );
+      RETURN NEW;
+    END IF;
+
+    IF (TG_OP = 'DELETE') THEN
+      PERFORM pg_notify(
+        'products_notification',
+        json_build_object(
+          'table', TG_TABLE_NAME,
+          'type', TG_OP,
+          'id', OLD.id,
+          'new', '',
+          'old', row_to_json(OLD)
+        )::text
+      );
+      RETURN OLD;
     END IF;
   END;
 $products_notifier$ LANGUAGE plpgsql;

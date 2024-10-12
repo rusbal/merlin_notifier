@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_10_054507) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_12_130613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "products", force: :cascade do |t|
     t.string "name"
-    t.integer "merlin_product_id"
     t.integer "stock_qty"
     t.decimal "price"
     t.datetime "created_at", null: false
@@ -29,6 +28,45 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_10_054507) do
        LANGUAGE plpgsql
       AS $function$
         BEGIN
+          IF (TG_OP = 'INSERT') THEN
+            PERFORM pg_notify(
+              'table_changes_notification',
+              json_build_object(
+                'table', TG_TABLE_NAME,
+                'type', TG_OP,
+                'id', NEW.id,
+                'new', row_to_json(NEW),
+                'old', ''
+              )::text
+            );
+          END IF;
+
+          IF (TG_OP = 'UPDATE') THEN
+            PERFORM pg_notify(
+              'table_changes_notification',
+              json_build_object(
+                'table', TG_TABLE_NAME,
+                'type', TG_OP,
+                'id', NEW.id,
+                'new', row_to_json(NEW),
+                'old', row_to_json(OLD)
+              )::text
+            );
+          END IF;
+
+          IF (TG_OP = 'DELETE') THEN
+            PERFORM pg_notify(
+              'table_changes_notification',
+              json_build_object(
+                'table', TG_TABLE_NAME,
+                'type', TG_OP,
+                'id', OLD.id,
+                'new', '',
+                'old', row_to_json(OLD)
+              )::text
+            );
+          END IF;
+
           IF (TG_OP = 'DELETE') THEN
             PERFORM pg_notify('products_notification', '{klass_name: "' || TG_TABLE_NAME || '", crud_method: "' || TG_OP || '", id: "' || OLD.id || '", name: "' || OLD.name || '", stock_qty: "' || OLD.stock_qty || '", price: "' || OLD.price || '"}');
             RETURN OLD;
