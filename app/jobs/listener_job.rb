@@ -11,13 +11,18 @@ class ListenerJob
 
   private
 
+  def portal_model
+    table_name = @payload["table"][..-2]
+    "Portal::#{table_name.capitalize}".constantize
+  end
+
   def db_operation
     @payload["type"].downcase.to_sym
   end
 
   def insert
     ap "INSERT -------------------"
-    Portal::Product.create(insert_data)
+    portal_model.create(insert_data)
   end
 
   def update
@@ -32,7 +37,7 @@ class ListenerJob
   end
 
   def portal_row
-    @portal_row ||= Portal::Product.find_by(merlin_product_id: @payload["id"])
+    @portal_row ||= portal_model.find_by(merlin_product_id: @payload["id"])
   end
 
   def delta
