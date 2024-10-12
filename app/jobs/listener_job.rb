@@ -36,13 +36,13 @@ class ListenerJob
   end
 
   def delta
-    changes = {}
-    old_row.keys.each do |key|
-      next if ["id", "created_at", "updated_at"].include?(key)
-      next if old_row[key] == new_row[key]
-      changes[key.to_sym] = new_row[key]
+    {}.tap do |hash|
+      old_row.keys.each do |key|
+        next if ["id", "created_at", "updated_at"].include?(key)
+        next if old_row[key] == new_row[key]
+        hash[key.to_sym] = new_row[key]
+      end
     end
-    changes
   end
 
   def old_row
