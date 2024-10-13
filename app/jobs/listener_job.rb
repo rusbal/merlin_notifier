@@ -12,8 +12,12 @@ class ListenerJob
   private
 
   def portal_model
+    portal_table_name.constantize
+  end
+
+  def portal_table_name
     table_name = @payload["table"][..-2]
-    "Portal::#{table_name.capitalize}".constantize
+    "Portal::#{table_name.capitalize}"
   end
 
   def db_operation
@@ -21,18 +25,17 @@ class ListenerJob
   end
 
   def insert
-    ap "INSERT -------------------"
+    ap "INSERT [#{portal_table_name}] -------------------"
     portal_model.create(insert_data)
   end
 
   def update
-    changes = delta
-    ap "UPDATE: #{changes}"
-    portal_row&.update(changes)
+    ap "UPDATE [#{portal_table_name}] #{delta}"
+    portal_row&.update(delta)
   end
 
   def delete
-    ap "DELETE -------------------"
+    ap "DELETE [#{portal_table_name}] -------------------"
     portal_row&.destroy
   end
 
@@ -41,7 +44,7 @@ class ListenerJob
   end
 
   def delta
-    {}.tap do |hash|
+    @delta ||= {}.tap do |hash|
       old_row.keys.each do |key|
         next if ["id", "created_at", "updated_at"].include?(key)
         next if old_row[key] == new_row[key]
